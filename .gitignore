@@ -6,3 +6,5 @@ Release/
 *.elf 
 *.map 
 *.bin
+.editorconfig
+*.log
