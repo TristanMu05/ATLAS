@@ -8,3 +8,4 @@ Release/
 *.bin
 .editorconfig
 *.log
+target/
