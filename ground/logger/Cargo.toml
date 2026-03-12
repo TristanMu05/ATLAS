@@ -4,3 +4,6 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+atlas_simulator = { path = "../simulator" }
+atlas_protocol = { path = "../protocol" }
+tokyo = "1.0.0"
