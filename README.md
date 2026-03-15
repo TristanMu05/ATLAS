@@ -53,28 +53,20 @@ ATLAS/
 │   └── include/
 │
 ├── ground/                 # Ground station (Rust)
-│   ├── README.md
-│   ├── Cargo.toml
-│   ├── Cargo.lock
-│   └── src/
-│       ├── main.rs
-│       ├── lib.rs
-│       ├── serial/         # Serial communication
-│       ├── protocol/       # Protocol parsing
-│       ├── telemetry/      # Telemetry handling
-│       ├── commands/       # Command dispatcher
-│       ├── logger/         # Data logging and replay
-│       └── ui/             # Dashboard interface
-│
-├── simulator/              # Telemetry simulator (Rust)
-│   ├── README.md
-│   ├── Cargo.toml
-│   └── src/
+│   ├── backend/            # Backend server
+│   ├── logger/             # Data logger
+│   ├── protocol/           # Protocol parser
+│   ├── replay/             # Data replay
+│   └── simulator/          # Telemetry simulator
 │
 ├── tools/                  # Utility tools
 │   ├── crc_check/
 │   ├── packet_inspector/
 │   └── log_converter/
+│
+├── ui/                     # Ground station UI (React)
+│   ├── src/
+│   └── public/
 │
 └── tests/                  # Integration tests
 ```
