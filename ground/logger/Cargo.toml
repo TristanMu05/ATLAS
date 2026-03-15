@@ -1,9 +1,16 @@
 [package]
-name = "logger"
+name = "atlas_logger"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 atlas_simulator = { path = "../simulator" }
 atlas_protocol = { path = "../protocol" }
-tokyo = "1.0.0"
+serde = {version = "1.0.228", features = ["derive"]}
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "logger"
+path = "src/main.rs"

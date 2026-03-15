@@ -9,3 +9,9 @@ Release/
 .editorconfig
 *.log
 target/
+ui/node_modules
+ui/dist
+ui/dist-ssr
+ui/*.local
+ui/.eslintcache
+ui/coverage

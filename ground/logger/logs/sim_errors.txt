@@ -1,23 +1,28 @@
-InvalidSync { found: [0, 85] }
-Sequece out of order. Expected: 0, recieved: 1
-LengthMismatch { expected_len: 4112, actual_len: 16 }
-Sequece out of order. Expected: 27, recieved: 28
-CrcMismatch { expected_crc: 44032, actual_crc: 44059 }
-Sequece out of order. Expected: 40, recieved: 41
-InvalidSync { found: [0, 85] }
-Sequece out of order. Expected: 49, recieved: 52
-CrcMismatch { expected_crc: 44032, actual_crc: 44071 }
-Sequece out of order. Expected: 59, recieved: 60
-LengthMismatch { expected_len: 4113, actual_len: 17 }
-Sequece out of order. Expected: 63, recieved: 64
-CrcMismatch { expected_crc: 19456, actual_crc: 19699 }
-LengthMismatch { expected_len: 4113, actual_len: 17 }
-Sequece out of order. Expected: 67, recieved: 69
-LengthMismatch { expected_len: 4114, actual_len: 18 }
-Sequece out of order. Expected: 86, recieved: 87
-CrcMismatch { expected_crc: 4096, actual_crc: 4333 }
-Sequece out of order. Expected: 89, recieved: 90
+[CrcMismatch] CrcMismatch { expected_crc: 10240, actual_crc: 10282 }
+[Sequence(Duplicate)] Duplicate packet: expected 18, got 17
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 15 }
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 16 }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 22, got 23
+[Sequence(OutOfOrder)] Out-of-order packet: expected 24, got 22
+[InvalidSync] InvalidSync { found: [0, 85] }
+[InvalidSync] InvalidSync { found: [0, 85] }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 36, got 38
+[Sequence(OutOfOrder)] Out-of-order packet: expected 39, got 37
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 14 }
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 16 }
+[InvalidSync] InvalidSync { found: [0, 85] }
+[InvalidSync] InvalidSync { found: [0, 85] }
+[InvalidSync] InvalidSync { found: [0, 85] }
+[CrcMismatch] CrcMismatch { expected_crc: 28160, actual_crc: 28291 }
 
 SIMULATION RESULTS:
-Successful packets: 80
-Dropped packets: 19
+Successful packets: 86
+Dropped packets: 14
+Packets too short: 0
+Invalid sync: 5
+Length mismatch: 4
+Crc mismatch: 2
+Skipped: 2
+Duplicate: 1
+Out of order: 2
+Total frames accounted for: 100

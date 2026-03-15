@@ -7,4 +7,8 @@ edition = "2024"
 atlas_protocol = { path = "../protocol" }
 
 [lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "replay"
 path = "src/main.rs"
