@@ -1,0 +1,23 @@
+InvalidSync { found: [0, 85] }
+Sequece out of order. Expected: 0, recieved: 1
+LengthMismatch { expected_len: 4112, actual_len: 16 }
+Sequece out of order. Expected: 27, recieved: 28
+CrcMismatch { expected_crc: 44032, actual_crc: 44059 }
+Sequece out of order. Expected: 40, recieved: 41
+InvalidSync { found: [0, 85] }
+Sequece out of order. Expected: 49, recieved: 52
+CrcMismatch { expected_crc: 44032, actual_crc: 44071 }
+Sequece out of order. Expected: 59, recieved: 60
+LengthMismatch { expected_len: 4113, actual_len: 17 }
+Sequece out of order. Expected: 63, recieved: 64
+CrcMismatch { expected_crc: 19456, actual_crc: 19699 }
+LengthMismatch { expected_len: 4113, actual_len: 17 }
+Sequece out of order. Expected: 67, recieved: 69
+LengthMismatch { expected_len: 4114, actual_len: 18 }
+Sequece out of order. Expected: 86, recieved: 87
+CrcMismatch { expected_crc: 4096, actual_crc: 4333 }
+Sequece out of order. Expected: 89, recieved: 90
+
+SIMULATION RESULTS:
+Successful packets: 80
+Dropped packets: 19

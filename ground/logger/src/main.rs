@@ -1,9 +1,7 @@
-use std::time::{Instant, Duration};
-use std::thread;
 use atlas_simulator::simulate;
 use std::fs::File;
-use std::io::{BufWriter, Write, self, Read, ErrorKind, BufReader};
-use atlas_protocol::{decode_packet, encode_packet, Packet};
+use std::io::{BufWriter, Write};
+use atlas_protocol::{decode_packet};
 
 /*
  * 
@@ -12,36 +10,82 @@ use atlas_protocol::{decode_packet, encode_packet, Packet};
  * 
  */
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    simulation()?;
+
+    let mode = std::env::args().nth(1).unwrap_or("sim".to_string());
+
+    match mode.as_str() {
+        "live" => live()?,
+        "sim" => simulation()?,
+        _ => return Err("usage: logger <live|sim>".into()),
+    }
+
+    Ok(())
+}
+
+use std::time::{SystemTime, UNIX_EPOCH};
+fn live() -> Result<(), Box<dyn std::error::Error>> {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)?
+        .as_secs();
+
+    let file = File::create(format!("logs/live_{now}_logs.atl"))?;
+    let err_file = File::create(format!("logs/live_{now}_errors.txt"))?;
+    let mut writer = BufWriter::new(file);
+    let mut err_writer = BufWriter::new(err_file);
+    let mut ok = 0;
+    let mut dropped = 0;
+    let mut last_valid_seq = 0;
+
+    // start listening to live port
+
+    // log frame
+
+    // decode and identify errors
+
+    // update last valid sync
+
     Ok(())
 }
 
 
 fn simulation() -> Result<(), Box<dyn std::error::Error>> {
-    let file = File::create("sim_packets.atl")?;
+    let file = File::create("logs/sim_packets.atl")?;
     let mut writer  = BufWriter::new(file);
+    let errors = File::create("logs/sim_errors.txt")?;
+    let mut err_writer = BufWriter::new(errors);
+    let mut ok = 0;
+    let mut dropped = 0;
+    let mut seq = 0;
+    let mut error_counter = (0,0,0,0,0); // packet too short, invalid sync, length mismatch, crc mismatch, seq error
+
     simulate(|frame| {
         println!("frame: {:?}", frame);
         log_frame(&mut writer, frame)?;
-        Ok(())
-    })?;
 
-
-/*
-    match decode_packet(&encoded_next) {
-        Ok(decoded_next) => {
-            ok += 1;
-            if decoded_next != next {
-                println!("roundtrip mismatch: sent={:?}, got={:?}", next, decoded_next);
+        match decode_packet(&frame) {
+            Ok(packet) => {
+                if packet.sequence != seq {
+                    let _ = log_error(&mut err_writer, format!("Sequece out of order. Expected: {seq}, recieved: {0}", packet.sequence));
+                    dropped += 1;
+                    seq = packet.sequence + 1;
+                }else { 
+                    seq += 1;
+                    ok += 1; }
+            }
+            Err(e) => {
+                dropped += 1;
+                let _  = log_error(&mut err_writer, format!("{:?}", e));
+                match e {
+                    _ => (),
+                }
             }
         }
-        Err(_e) => {
-            dropped += 1;
-            println!("Dropped corrupted packet");
-        }
-    }
-    println!("ok={}, dropped={}", ok, dropped);
-    */
+        println!("ok={}, dropped={}", ok, dropped);
+
+
+        Ok(())
+    })?;
+    let _ = log_error(&mut err_writer, format!("\nSIMULATION RESULTS:\nSuccessful packets: {ok}\nDropped packets: {dropped}"));
     Ok(())
 }
 
@@ -54,46 +98,11 @@ fn log_frame(w: &mut BufWriter<File>, frame: &[u8]) -> std::io::Result<()> {
     Ok(())
 }
 
-fn read_next_frame(r: &mut BufReader<File>) -> std::io::Result<Option<Vec<u8>>> {
-    let mut len_buf: [u8; 4] = [0u8; 4];
-    match r.read(&mut len_buf)? {
-        0 => return Ok(None),
-        4 => {},
-        _ => return Err(io::Error::new(ErrorKind::UnexpectedEof, "truncated length field")),
-    }
-    
-    let len = u32::from_le_bytes(len_buf) as usize;
-    let mut frame = vec![0u8; len];
-    r.read_exact(&mut frame)?;
-
-    Ok(Some(frame))
-}
-
-fn read_from_file(reader: &mut BufReader<File>) -> std::io::Result<()> {
-    let mut pass = 0;
-    let mut fail = 0;
-    loop {
-        match read_next_frame(reader)? {
-            None => break,
-            Some(frame) => {
-                println!("frame: {:02X?}", frame);
-                match decode_packet(&frame) {
-                    Ok(_pkt) => {
-                        pass += 1;
-                    }
-                    Err(_e) => {
-                        fail += 1;
-                    }
-                }
-            }
-        }
-    }
-
-    println!(
-        "Reader reported {} successful packets and {} failed packets", pass, fail
-    );
-
+fn log_error(w: &mut BufWriter<File>, msg: impl std::fmt::Display) -> std::io::Result<()> {
+    w.write_all(format!("{msg}\n").as_bytes())?;
+    w.flush()?;
     Ok(())
 }
+
 
     

@@ -1,8 +1,8 @@
-use atlas_protocol::{decode_packet, encode_packet, Packet};
+use atlas_protocol::{encode_packet, Packet};
 use rand::{Rng, RngExt};
-use core::panic;
 use std::time::{Instant, Duration};
 use std::thread;
+use atlas_protocol::crc16_ccitt_false;
 
 pub fn simulate<F>(mut on_frame: F) -> Result<(), Box<dyn std::error::Error>> 
     where F: FnMut(&[u8]) -> std::io::Result<()>,
@@ -10,13 +10,8 @@ pub fn simulate<F>(mut on_frame: F) -> Result<(), Box<dyn std::error::Error>>
     let sim_start = Instant::now();
     let mut rng = rand::rng();
 
-
-    //track packet success rate:
-    let mut ok = 0usize;
-    let mut dropped = 0usize;
-
     // loop
-    let mut seq: u16 = 1;
+    let mut seq: u16 = 0;
     for _ in 0..100 {
         // simulate time delay between packets
         let base_ms: i64 = 100; //nominal 10hz
@@ -44,9 +39,27 @@ pub fn simulate<F>(mut on_frame: F) -> Result<(), Box<dyn std::error::Error>>
         let mut encoded_next = encode_packet(&next);
 
         // 1/10 packets are corrupted
-        let err = rng.random_range(0..=10);
+        let mut err = rng.random_range(0..10);
+        
         if err == 5 {
-            encoded_next[0] = 0x00;
+            err = rng.random_range(1..=4);
+            match err {
+                1 => encoded_next[0] = 0x00, // corrupt sync
+                2 => {
+                    encoded_next[6] += 1;
+                    let crc_index = encoded_next.len() - 2;
+                    let new_crc = crc16_ccitt_false(&encoded_next[2..crc_index]);
+                    encoded_next[crc_index..].copy_from_slice(&new_crc.to_be_bytes());
+                    seq+=1;
+                    continue;
+                }, // corrupt sequence and redo crc to pass decode
+                3 => {
+                    let len = encoded_next.len(); // corrupt crc
+                    encoded_next[len - 1] = 0x00;
+                },
+                4 => encoded_next[3] = 0x10, // corrupt length
+                _ => {},
+            }
         }
 
         on_frame(&encoded_next)?;
