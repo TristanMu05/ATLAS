@@ -15,4 +15,5 @@ ui/dist-ssr
 ui/*.local
 ui/.eslintcache
 ui/coverage
-agent.txt
+AGENTS.md
+CLAUDE.md
