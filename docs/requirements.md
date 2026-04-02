@@ -33,13 +33,14 @@
 ## Hardware Requirements
 
 ### Embedded System (Firmware Target)
-- **Microcontroller**: STM32 series (STM32H7xx recommended for performance)
-- **Flash Memory**: Minimum 256KB for firmware
-- **RAM**: Minimum 128KB for runtime
+- **Microcontroller**: STM32F446RET6
+- **Flash Memory**: 512KB on target MCU
+- **RAM**: 128KB on target MCU
 - **Serial Communication**: UART interface (3.3V logic levels)
 - **Crystal Oscillator**: 8-32 MHz external oscillator
 - **Programming**: ST-Link V2 or compatible programmer
 - **Power Supply**: 3.3V regulated power
+- **Initial Sensor Set**: temperature sensor, light sensor, and ADC-based voltage monitor or simulated battery-monitor source
 
 ### Communications Hardware
 - **Serial Interface**: USB-to-Serial adapter (CH340, FT232, or equivalent)
@@ -59,27 +60,31 @@
 ### Firmware Requirements (C/Embedded)
 
 #### Telemetry Collection
-- Real-time sensor data acquisition at ≥10 Hz
-- Support for multiple simultaneous telemetry streams
+- Real-time sensor data acquisition at 10 Hz in NORMAL mode
+- Initial telemetry fields: mode, temperature, voltage, light, status flags, fault flags
 - Timestamp accuracy ±10ms
 - Data buffering for graceful degradation under high load
 
 #### Protocol Implementation
 - Custom binary telemetry protocol with CRC-16 validation
-- Packet size: 64-256 bytes
-- Transmission rate: Configurable (default 100ms intervals)
+- CRC variant: CCITT-FALSE, big-endian
+- Multi-byte field byte order: big-endian
+- Telemetry payload size: 10 bytes
+- Maximum firmware payload size in v1: 64 bytes
+- Transmission rate: default 100ms intervals in NORMAL mode
 - Error detection and frame synchronization
 
 #### State Machine
-- Finite state machine with states: IDLE, ARMED, LOGGING, FAULT, RECOVERY
+- Finite state machine with states: IDLE, NORMAL, SAFE, DIAGNOSTIC
 - State transitions triggered by commands or sensor conditions
 - Timeout mechanisms for safety (e.g., auto-disarm after 5 minutes)
 - Fault detection and logging
 
 #### Command Processing
 - Command parsing from ground station
-- Command validation and authentication
-- Command queue with priority levels
+- Single outstanding command at a time in v1
+- Explicit ACK / NAK plus command-response behavior
+- No authentication in v1
 - Response confirmation for critical commands
 
 #### Fault Handling
