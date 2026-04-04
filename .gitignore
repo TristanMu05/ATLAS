@@ -17,3 +17,14 @@ ui/.eslintcache
 ui/coverage
 AGENTS.md
 CLAUDE.md
+
+# Eclipse workspace metadata
+.metadata/
+
+# Eclipse internal junk
+*.log
+*.pdom
+
+# OS junk
+.DS_Store
+Thumbs.db
