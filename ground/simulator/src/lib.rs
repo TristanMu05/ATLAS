@@ -1,7 +1,25 @@
 use atlas_protocol::{encode_packet, Packet};
-use rand::{Rng, RngExt};
+use rand::RngExt;
 use std::time::{Instant, Duration};
 use std::thread;
+
+fn telemetry_payload(sequence: u16, timestamp_ms: u32) -> Vec<u8> {
+    let mode = 0x01u8;
+    let temperature_deci_c = 245i16 + ((sequence % 6) as i16);
+    let voltage_mv = 3700u16.saturating_sub((sequence % 12) * 4);
+    let light_raw = 900u16 + (timestamp_ms as u16 % 180);
+    let status_flags = 0x1Fu8;
+    let fault_flags = 0u16;
+
+    let mut payload = Vec::with_capacity(10);
+    payload.push(mode);
+    payload.extend_from_slice(&temperature_deci_c.to_be_bytes());
+    payload.extend_from_slice(&voltage_mv.to_be_bytes());
+    payload.extend_from_slice(&light_raw.to_be_bytes());
+    payload.push(status_flags);
+    payload.extend_from_slice(&fault_flags.to_be_bytes());
+    payload
+}
 
 pub fn simulate<F>(mut on_frame: F) -> Result<(), Box<dyn std::error::Error>> 
     where F: FnMut(&[u8]) -> std::io::Result<()>,
@@ -20,17 +38,14 @@ pub fn simulate<F>(mut on_frame: F) -> Result<(), Box<dyn std::error::Error>>
         let sleep_ms = (base_ms + delta).max(1) as u64;
         thread::sleep(Duration::from_millis(sleep_ms));
 
-        // simulate a packet with varying payloads
-        let payload_len = 4;
-        let mut payload = vec![0u8; payload_len];
-        rng.fill_bytes(&mut payload);
+        let elapsed_ms = sim_start.elapsed().as_millis() as u32;
 
         // build our simulated packet
         let next = Packet {
             message_id: 0x01,
             sequence: seq,
-            timestamp: sim_start.elapsed().as_millis() as u32,
-            payload,
+            timestamp: elapsed_ms,
+            payload: telemetry_payload(seq, elapsed_ms),
         };
 
         seq += 1; // sequence

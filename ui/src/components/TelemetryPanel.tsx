@@ -11,7 +11,7 @@ export const TelemetryPanel: React.FC = () => {
   // Helper for mode styles
   const getModeColor = (mode: string) => {
     switch(mode) {
-      case "NOMINAL": return "text-brand-green border-brand-green";
+      case "NORMAL": return "text-brand-green border-brand-green";
       case "SAFE": return "text-gray-400 border-gray-400";
       case "WARNING": return "text-brand-yellow border-brand-yellow";
       case "DIAGNOSTIC": return "text-blue-400 border-blue-400";
@@ -38,6 +38,12 @@ export const TelemetryPanel: React.FC = () => {
   // Status indicator
   const tempColor = currentPacket.temperature > 50 ? "text-brand-red" : currentPacket.temperature > 40 ? "text-brand-yellow" : "text-white";
   const voltColor = currentPacket.voltage < 3.1 ? "text-brand-red" : "text-white";
+  const linkColor =
+    stats.linkStatus === "CONNECTED"
+      ? "text-brand-green"
+      : stats.linkStatus === "CONNECTING" || stats.linkStatus === "RECONNECTING"
+        ? "text-brand-yellow"
+        : "text-brand-red";
 
   return (
     <div className="flex flex-col space-y-4 w-full">
@@ -47,17 +53,13 @@ export const TelemetryPanel: React.FC = () => {
         <div className="flex space-x-6">
           <div className="flex items-center space-x-2">
             <span className="text-gray-400 text-sm">Link:</span>
-            <span className={`text-sm font-bold ${stats.linkStatus === 'CONNECTED' ? 'text-brand-green' : 'text-brand-red'}`}>
+            <span className={`text-sm font-bold ${linkColor}`}>
               {stats.linkStatus}
             </span>
           </div>
           <div className="flex items-center space-x-2">
             <span className="text-gray-400 text-sm">Packets:</span>
             <span className="text-sm text-white">{stats.packetRateHz} Hz</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-gray-400 text-sm">Seq:</span>
-            <span className="text-sm font-mono text-white">{currentPacket.sequence}</span>
           </div>
           <div className="flex items-center space-x-2">
             <span className="text-gray-400 text-sm">Uptime:</span>
@@ -70,7 +72,7 @@ export const TelemetryPanel: React.FC = () => {
       <div className="grid grid-cols-4 gap-4">
         <StatItem label="Temperature" value={`${currentPacket.temperature.toFixed(1)} °C`} colorClass={tempColor} />
         <StatItem label="Voltage" value={`${currentPacket.voltage.toFixed(2)} V`} colorClass={voltColor} />
-        <StatItem label="Packet Rate" value={`${stats.packetRateHz} Hz`} />
+        <StatItem label="Light (ADC)" value={currentPacket.light} />
         <StatItem label="Sequence" value={`# ${currentPacket.sequence}`} />
       </div>
     </div>

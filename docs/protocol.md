@@ -105,8 +105,8 @@ Fault flags represent current active faults or latched recoverable faults.
 | 8 | `INTERNAL_TIMEOUT` | Internal timing or stuck-loop timeout detected |
 | 9 | `WATCHDOG_RESET_DETECTED` | Previous reset was attributed to watchdog recovery |
 | 10 | `PLATFORM_INIT_FAULT` | Core platform initialization failed or degraded |
-| 11 | `RESERVED` | Reserved for future use |
-| 12 | `RESERVED` | Reserved for future use |
+| 11 | `UNDER_TEMPERATURE` | Temperature dropped below the demo recovery threshold |
+| 12 | `HIGH_VOLTAGE` | Voltage exceeded the demo recovery threshold |
 | 13 | `RESERVED` | Reserved for future use |
 | 14 | `RESERVED` | Reserved for future use |
 | 15 | `RESERVED` | Reserved for future use |
@@ -128,6 +128,8 @@ V1 command handling supports one outstanding command at a time.
 | `0x02` | `REQUEST_STATUS` | none | Request an immediate telemetry/status packet |
 | `0x03` | `CLEAR_FAULTS` | none | Clear recoverable latched faults |
 | `0x04` | `SET_TELEMETRY_ENABLE` | 1 byte: `0x00` disable, `0x01` enable | Enable or disable periodic telemetry |
+| `0x05` | `SMALL_FAULT` | 1 byte code | Demo-only injection of malformed or sequence-fault frames |
+| `0x06` | `MAJOR_FAULT` | 1 byte code | Demo-only injection of 5-second recovery faults |
 
 Command rules for v1:
 
@@ -136,6 +138,18 @@ Command rules for v1:
 - `SET_MODE` to `SAFE` is always allowed.
 - `SET_MODE` out of `SAFE` is allowed only when blocking critical faults are no longer active.
 - `SET_TELEMETRY_ENABLE(0x00)` is rejected while in `SAFE`.
+
+Demo extension values:
+
+- `SMALL_FAULT(0x01)` injects a CRC error
+- `SMALL_FAULT(0x02)` injects a sync error
+- `SMALL_FAULT(0x03)` injects a length error
+- `SMALL_FAULT(0x04)` injects a sequence gap
+- `MAJOR_FAULT(0x01)` injects a 5-second over-temperature condition
+- `MAJOR_FAULT(0x02)` injects a 5-second high-voltage condition
+- `MAJOR_FAULT(0x03)` injects a 5-second light sensor failure
+- `MAJOR_FAULT(0x04)` injects a 5-second under-temperature condition
+- `MAJOR_FAULT(0x05)` injects a 5-second low-voltage condition
 
 ## ACK / NAK Packet (`0x03`)
 
@@ -188,5 +202,9 @@ Fault / Event payload is 1 byte.
 | `0x0A` | `INTERNAL_TIMEOUT` | Internal timeout or stuck-loop condition detected |
 | `0x0B` | `UART_RX_OVERRUN` | UART overrun was detected |
 | `0x0C` | `WATCHDOG_RESET_DETECTED` | Watchdog-based recovery was detected after boot |
+| `0x0D` | `UNDER_TEMPERATURE` | Temperature dropped below the demo recovery threshold |
+| `0x0E` | `HIGH_VOLTAGE` | Voltage exceeded the demo recovery threshold |
+| `0x0F` | `LOW_VOLTAGE` | Voltage dropped below the recovery threshold |
+| `0x10` | `OVER_TEMPERATURE` | Temperature exceeded the recovery threshold |
 
 Future fault / event codes may be added, but they must be documented in this file before firmware uses them.

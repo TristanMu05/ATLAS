@@ -23,13 +23,13 @@ export const CommandConsole: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col bg-dark-800 border border-dark-700 rounded h-full">
+    <div className="flex flex-col bg-dark-800 border border-dark-700 rounded">
       <div className="bg-dark-900 border-b border-dark-700 p-3 flex items-center space-x-2">
         <Terminal size={16} className="text-gray-400" />
         <h2 className="text-sm font-semibold tracking-wider text-gray-200 uppercase">Command Console</h2>
       </div>
 
-      <div className="p-4 flex flex-col space-y-6 flex-1">
+      <div className="p-4 flex flex-col space-y-6">
         
         {/* Mode Switches */}
         <div>
@@ -41,8 +41,8 @@ export const CommandConsole: React.FC = () => {
             <button onClick={() => handleModeChange("IDLE")} className="bg-dark-700 hover:bg-dark-600 text-gray-300 py-2 rounded text-sm font-semibold transition-colors border border-dark-600">
               IDLE
             </button>
-            <button onClick={() => handleModeChange("NOMINAL")} className="bg-brand-green bg-opacity-10 hover:bg-opacity-20 text-brand-green py-2 rounded text-sm font-semibold transition-colors border border-brand-green border-opacity-30 flex items-center justify-center space-x-2">
-              <Cpu size={14} /><span>NOMINAL</span>
+            <button onClick={() => handleModeChange("NORMAL")} className="bg-brand-green bg-opacity-10 hover:bg-opacity-20 text-brand-green py-2 rounded text-sm font-semibold transition-colors border border-brand-green border-opacity-30 flex items-center justify-center space-x-2">
+              <Cpu size={14} /><span>NORMAL</span>
             </button>
             <button onClick={() => handleModeChange("DIAGNOSTIC")} className="bg-blue-500 bg-opacity-10 hover:bg-opacity-20 text-blue-400 py-2 rounded text-sm font-semibold transition-colors border border-blue-500 border-opacity-30">
               DIAGNOSTIC
@@ -55,14 +55,14 @@ export const CommandConsole: React.FC = () => {
           <div className="flex flex-col space-y-2">
             <input 
               type="text" 
-              placeholder="COMMAND (e.g. SET_RATE)"
+              placeholder="COMMAND (e.g. SMALL_FAULT, MAJOR_FAULT)"
               className="bg-dark-900 border border-dark-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green uppercase"
               value={cmdInput}
               onChange={(e) => setCmdInput(e.target.value)}
             />
             <input 
               type="text" 
-              placeholder="PARAM (e.g. 100)"
+              placeholder="PARAM (e.g. 1)"
               className="bg-dark-900 border border-dark-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-green uppercase"
               value={paramInput}
               onChange={(e) => setParamInput(e.target.value)}
@@ -74,6 +74,12 @@ export const CommandConsole: React.FC = () => {
               <span>SEND</span>
               <Send size={14} />
             </button>
+            <div className="text-xs text-gray-500 pt-1 leading-5">
+              SMALL_FAULT: `1=CRC`, `2=SYNC`, `3=LENGTH`, `4=SEQ`
+            </div>
+            <div className="text-xs text-gray-500 leading-5">
+              MAJOR_FAULT: `1=TEMP_SPIKE`, `2=VOLTAGE_SPIKE`, `3=LIGHT_FAIL`, `4=TEMP_DIP`, `5=VOLTAGE_DROP`
+            </div>
           </div>
         </div>
 

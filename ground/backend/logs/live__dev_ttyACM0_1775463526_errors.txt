@@ -1,0 +1,10 @@
+[LinkState:CONNECTING] opening /dev/ttyACM0
+[LinkState:CONNECTED] connected to /dev/ttyACM0
+[DecodeError] CrcMismatch { expected_crc: 10, actual_crc: 1053 }
+[InvalidSync] Discarded buffered bytes while searching for sync
+[Sequence] Skipped/dropped packet(s): expected 22119, got 22639
+[LinkState:RECONNECTING] lost /dev/ttyACM0: Broken pipe
+[LinkState:RECONNECTING] waiting for /dev/ttyACM0: No such device
+[LinkState:RECONNECTING] waiting for /dev/ttyACM0: No such file or directory
+[LinkState:CONNECTED] connected to /dev/ttyACM0
+[InvalidSync] Discarded buffered bytes while searching for sync

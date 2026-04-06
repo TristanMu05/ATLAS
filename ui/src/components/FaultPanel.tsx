@@ -1,41 +1,59 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTelemetry } from "../contexts/TelemetryProvider";
 
 export const FaultPanel: React.FC = () => {
-  const { stats, currentPacket } = useTelemetry();
-
-  const [showHistory, setShowHistory] = useState(false);
+  const { stats, currentPacket, dismissFault } = useTelemetry();
 
   if (!stats || !currentPacket) return null;
 
-  return (
-    <>
-      <div className="bg-dark-800 border-l-2 border-brand-red rounded p-4 h-full flex flex-col relative">
-        <h3 className="text-gray-400 text-sm font-semibold tracking-wider uppercase mb-4 flex items-center">
-          <span className="w-2 h-2 rounded-full bg-brand-red mr-2 animate-pulse"></span>
-          Fault Status
-        </h3>
-        
-        <div className="flex-1 space-y-4">
-          <div>
-            <div className="flex justify-between items-end mb-1">
-              <span className="text-xs text-gray-500 uppercase tracking-widest block">Active Faults</span>
-              {stats.activeFaults.length > 0 && stats.activeFaults[0] !== 'None' && (
-                <button 
-                  onClick={() => setShowHistory(true)}
-                  className="text-[10px] text-brand-blue hover:text-white uppercase tracking-widest"
-                >
-                  View History
-                </button>
-              )}
-            </div>
-            <div className="bg-dark-900 border border-dark-700 rounded p-2 min-h-[60px] flex flex-col justify-center">
-              {stats.activeFaults.slice(0, 1).map((f, i) => (
-                <div key={i} className={`text-sm ${f === 'None' ? 'text-brand-green' : 'text-brand-red'}`}>{f}</div>
-              ))}
-            </div>
-          </div>
+  const hasFaults = stats.activeFaults.length > 0 && stats.activeFaults[0] !== 'None';
 
+  return (
+    <div className="bg-dark-800 border-l-2 border-brand-red rounded p-4 h-full flex flex-col relative">
+      <h3 className="text-gray-400 text-sm font-semibold tracking-wider uppercase mb-4 flex items-center">
+        <span className={`w-2 h-2 rounded-full mr-2 ${hasFaults ? 'bg-brand-red animate-pulse' : 'bg-brand-green'}`}></span>
+        Fault Status
+      </h3>
+      
+      <div className="flex-1 space-y-4 overflow-hidden flex flex-col">
+        {/* Active Faults List */}
+        <div className="flex-1 flex flex-col min-h-0">
+          <span className="text-xs text-gray-500 uppercase tracking-widest block mb-1">Active Faults</span>
+          <div className="bg-dark-900 border border-dark-700 rounded p-2 min-h-[60px] flex-1 overflow-y-auto space-y-1">
+            {!hasFaults ? (
+              <div className="text-sm text-brand-green flex items-center justify-center h-full">
+                <svg className="w-4 h-4 mr-1.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                No Active Faults
+              </div>
+            ) : (
+              stats.activeFaults.map((f, i) => (
+                <div
+                  key={`${f}-${i}`}
+                  className="group flex items-center justify-between text-sm px-2 py-1.5 rounded border border-brand-red/30 bg-red-950/30 text-brand-red transition-colors hover:bg-red-950/50"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand-red flex-shrink-0 animate-pulse"></span>
+                    <span className="truncate">{f}</span>
+                  </div>
+                  <button
+                    onClick={() => dismissFault(i)}
+                    className="flex-shrink-0 ml-2 w-5 h-5 flex items-center justify-center rounded text-gray-500 hover:text-white hover:bg-red-900/60 transition-colors opacity-0 group-hover:opacity-100"
+                    title="Dismiss fault"
+                    aria-label={`Dismiss fault: ${f}`}
+                  >
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Telemetry Integrity */}
         <div>
           <span className="text-xs text-gray-500 uppercase tracking-widest block mb-1">Telemetry Integrity</span>
           <div className="grid grid-cols-2 gap-2 mt-2">
@@ -73,34 +91,7 @@ export const FaultPanel: React.FC = () => {
             </div>
           </div>
         </div>
-        </div>
       </div>
-
-      {showHistory && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="bg-dark-800 border border-dark-700 rounded-lg shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[80vh]">
-            <div className="p-4 border-b border-dark-700 flex justify-between items-center bg-dark-900">
-              <h3 className="text-white font-bold tracking-widest uppercase flex items-center">
-                <span className="w-2 h-2 rounded-full bg-brand-red mr-2 animate-pulse"></span>
-                Fault History
-              </h3>
-              <button 
-                onClick={() => setShowHistory(false)}
-                className="text-gray-400 hover:text-white text-xl"
-              >
-                &times;
-              </button>
-            </div>
-            <div className="p-4 overflow-y-auto flex-1 space-y-2">
-              {stats.activeFaults.map((f, i) => (
-                <div key={i} className={`text-sm p-2 rounded border ${f === 'None' ? 'bg-dark-900 border-dark-700 text-brand-green' : 'bg-red-900/20 border-brand-red text-brand-red'}`}>
-                  {f}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+    </div>
   );
 };

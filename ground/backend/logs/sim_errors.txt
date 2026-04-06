@@ -1,137 +1,117 @@
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 1, got 2
-[Sequence(OutOfOrder)] Out-of-order packet: expected 3, got 1
-[InvalidSync] InvalidSync { found: [0, 85] }
 [InvalidSync] InvalidSync { found: [0, 85] }
 [LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[Sequence(Duplicate)] Duplicate packet: expected 35, got 34
-[InvalidSync] InvalidSync { found: [0, 85] }
-[CrcMismatch] CrcMismatch { expected_crc: 30720, actual_crc: 30962 }
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 114, got 115
-[Sequence(OutOfOrder)] Out-of-order packet: expected 116, got 114
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 130, got 131
-[CrcMismatch] CrcMismatch { expected_crc: 53504, actual_crc: 53557 }
-[InvalidSync] InvalidSync { found: [0, 85] }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 149, got 150
-[Sequence(Duplicate)] Duplicate packet: expected 153, got 152
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[CrcMismatch] CrcMismatch { expected_crc: 29184, actual_crc: 29432 }
-[InvalidSync] InvalidSync { found: [0, 85] }
-[InvalidSync] InvalidSync { found: [0, 85] }
-[InvalidSync] InvalidSync { found: [0, 85] }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 176, got 177
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 185, got 186
-[Sequence(Duplicate)] Duplicate packet: expected 200, got 199
-[Sequence(Duplicate)] Duplicate packet: expected 203, got 202
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 204, got 205
-[Sequence(OutOfOrder)] Out-of-order packet: expected 206, got 204
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 208, got 209
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 218, got 219
-[Sequence(Duplicate)] Duplicate packet: expected 228, got 227
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 249, got 250
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[InvalidSync] InvalidSync { found: [0, 85] }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 267, got 268
-[CrcMismatch] CrcMismatch { expected_crc: 15872, actual_crc: 16114 }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 281, got 282
-[Sequence(OutOfOrder)] Out-of-order packet: expected 283, got 281
-[CrcMismatch] CrcMismatch { expected_crc: 55552, actual_crc: 55676 }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 298, got 299
-[Sequence(OutOfOrder)] Out-of-order packet: expected 300, got 298
-[InvalidSync] InvalidSync { found: [0, 85] }
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[Sequence(Duplicate)] Duplicate packet: expected 317, got 316
-[Sequence(Duplicate)] Duplicate packet: expected 318, got 317
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[InvalidSync] InvalidSync { found: [0, 85] }
-[CrcMismatch] CrcMismatch { expected_crc: 51456, actual_crc: 51507 }
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[InvalidSync] InvalidSync { found: [0, 85] }
-[CrcMismatch] CrcMismatch { expected_crc: 23296, actual_crc: 23400 }
-[CrcMismatch] CrcMismatch { expected_crc: 40704, actual_crc: 40795 }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 441, got 442
-[Sequence(OutOfOrder)] Out-of-order packet: expected 443, got 441
-[InvalidSync] InvalidSync { found: [0, 85] }
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 492, got 494
-[InvalidSync] InvalidSync { found: [0, 85] }
-[CrcMismatch] CrcMismatch { expected_crc: 25856, actual_crc: 25899 }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 524, got 525
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[Sequence(Duplicate)] Duplicate packet: expected 537, got 536
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 537, got 538
-[CrcMismatch] CrcMismatch { expected_crc: 47360, actual_crc: 47420 }
-[InvalidSync] InvalidSync { found: [0, 85] }
-[CrcMismatch] CrcMismatch { expected_crc: 51712, actual_crc: 51867 }
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[Sequence(Duplicate)] Duplicate packet: expected 591, got 590
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 591, got 592
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 593, got 594
-[Sequence(OutOfOrder)] Out-of-order packet: expected 595, got 593
-[InvalidSync] InvalidSync { found: [0, 85] }
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[InvalidSync] InvalidSync { found: [0, 85] }
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[InvalidSync] InvalidSync { found: [0, 85] }
-[CrcMismatch] CrcMismatch { expected_crc: 9984, actual_crc: 10219 }
-[Sequence(Duplicate)] Duplicate packet: expected 669, got 668
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 669, got 670
-[InvalidSync] InvalidSync { found: [0, 85] }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 674, got 675
-[Sequence(OutOfOrder)] Out-of-order packet: expected 676, got 674
-[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 692, got 693
-[Sequence(OutOfOrder)] Out-of-order packet: expected 694, got 692
-[InvalidSync] InvalidSync { found: [0, 85] }
-[Sequence(Duplicate)] Duplicate packet: expected 695, got 694
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 695, got 696
-[InvalidSync] InvalidSync { found: [0, 85] }
-[InvalidSync] InvalidSync { found: [0, 85] }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 20, got 21
+[CrcMismatch] CrcMismatch { expected_crc: 4096, actual_crc: 4317 }
 [LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
 [InvalidSync] InvalidSync { found: [0, 85] }
 [InvalidSync] InvalidSync { found: [0, 85] }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 749, got 750
-[Sequence(Duplicate)] Duplicate packet: expected 756, got 755
 [InvalidSync] InvalidSync { found: [0, 85] }
-[CrcMismatch] CrcMismatch { expected_crc: 64512, actual_crc: 64583 }
-[CrcMismatch] CrcMismatch { expected_crc: 42496, actual_crc: 42691 }
+[CrcMismatch] CrcMismatch { expected_crc: 9984, actual_crc: 10163 }
+[CrcMismatch] CrcMismatch { expected_crc: 30976, actual_crc: 31179 }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 99, got 100
 [InvalidSync] InvalidSync { found: [0, 85] }
-[CrcMismatch] CrcMismatch { expected_crc: 55296, actual_crc: 55320 }
+[Sequence(Duplicate)] Duplicate packet: expected 113, got 112
+[Sequence(Duplicate)] Duplicate packet: expected 133, got 132
+[Sequence(Duplicate)] Duplicate packet: expected 157, got 156
 [LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[CrcMismatch] CrcMismatch { expected_crc: 45056, actual_crc: 45198 }
-[Sequence(Duplicate)] Duplicate packet: expected 850, got 849
-[CrcMismatch] CrcMismatch { expected_crc: 37376, actual_crc: 37479 }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 853, got 854
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 193, got 194
+[InvalidSync] InvalidSync { found: [0, 85] }
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
+[CrcMismatch] CrcMismatch { expected_crc: 7168, actual_crc: 7223 }
+[Sequence(Duplicate)] Duplicate packet: expected 227, got 226
+[InvalidSync] InvalidSync { found: [0, 85] }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 244, got 245
+[Sequence(OutOfOrder)] Out-of-order packet: expected 246, got 244
+[InvalidSync] InvalidSync { found: [0, 85] }
+[InvalidSync] InvalidSync { found: [0, 85] }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 266, got 267
+[Sequence(OutOfOrder)] Out-of-order packet: expected 268, got 266
+[Sequence(Duplicate)] Duplicate packet: expected 278, got 277
+[InvalidSync] InvalidSync { found: [0, 85] }
+[CrcMismatch] CrcMismatch { expected_crc: 35840, actual_crc: 35954 }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 330, got 331
+[Sequence(OutOfOrder)] Out-of-order packet: expected 332, got 330
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 342, got 343
+[Sequence(OutOfOrder)] Out-of-order packet: expected 344, got 342
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 347, got 348
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
+[CrcMismatch] CrcMismatch { expected_crc: 30208, actual_crc: 30422 }
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
+[CrcMismatch] CrcMismatch { expected_crc: 20480, actual_crc: 20553 }
+[InvalidSync] InvalidSync { found: [0, 85] }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 442, got 443
+[CrcMismatch] CrcMismatch { expected_crc: 7424, actual_crc: 7640 }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 458, got 459
+[Sequence(OutOfOrder)] Out-of-order packet: expected 460, got 458
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
+[CrcMismatch] CrcMismatch { expected_crc: 41984, actual_crc: 42006 }
+[InvalidSync] InvalidSync { found: [0, 85] }
+[Sequence(Duplicate)] Duplicate packet: expected 502, got 501
+[CrcMismatch] CrcMismatch { expected_crc: 64256, actual_crc: 64342 }
+[CrcMismatch] CrcMismatch { expected_crc: 27904, actual_crc: 27985 }
+[CrcMismatch] CrcMismatch { expected_crc: 46592, actual_crc: 46646 }
 [LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
 [InvalidSync] InvalidSync { found: [0, 85] }
-[Sequence(Skipped)] Skipped/dropped packet(s): expected 883, got 884
-[Sequence(OutOfOrder)] Out-of-order packet: expected 885, got 883
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 573, got 574
+[Sequence(OutOfOrder)] Out-of-order packet: expected 575, got 573
 [LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
-[CrcMismatch] CrcMismatch { expected_crc: 16896, actual_crc: 17078 }
-[CrcMismatch] CrcMismatch { expected_crc: 28672, actual_crc: 28742 }
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 670, got 671
+[CrcMismatch] CrcMismatch { expected_crc: 36864, actual_crc: 37014 }
+[Sequence(Duplicate)] Duplicate packet: expected 681, got 680
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
+[CrcMismatch] CrcMismatch { expected_crc: 27392, actual_crc: 27434 }
+[Sequence(Duplicate)] Duplicate packet: expected 706, got 705
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
+[CrcMismatch] CrcMismatch { expected_crc: 48640, actual_crc: 48873 }
+[CrcMismatch] CrcMismatch { expected_crc: 61696, actual_crc: 61805 }
+[CrcMismatch] CrcMismatch { expected_crc: 8704, actual_crc: 8748 }
+[CrcMismatch] CrcMismatch { expected_crc: 26880, actual_crc: 26993 }
+[CrcMismatch] CrcMismatch { expected_crc: 2048, actual_crc: 2285 }
+[InvalidSync] InvalidSync { found: [0, 85] }
+[CrcMismatch] CrcMismatch { expected_crc: 56832, actual_crc: 56989 }
+[CrcMismatch] CrcMismatch { expected_crc: 1024, actual_crc: 1098 }
+[CrcMismatch] CrcMismatch { expected_crc: 2048, actual_crc: 2129 }
+[InvalidSync] InvalidSync { found: [0, 85] }
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 831, got 832
 [LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
 [InvalidSync] InvalidSync { found: [0, 85] }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 859, got 860
+[InvalidSync] InvalidSync { found: [0, 85] }
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
+[Sequence(Duplicate)] Duplicate packet: expected 888, got 887
+[CrcMismatch] CrcMismatch { expected_crc: 18944, actual_crc: 19178 }
+[Sequence(Duplicate)] Duplicate packet: expected 898, got 897
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 906, got 907
+[Sequence(OutOfOrder)] Out-of-order packet: expected 908, got 906
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
+[CrcMismatch] CrcMismatch { expected_crc: 15360, actual_crc: 15431 }
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 974, got 975
+[Sequence(Skipped)] Skipped/dropped packet(s): expected 985, got 986
+[Sequence(OutOfOrder)] Out-of-order packet: expected 987, got 985
+[CrcMismatch] CrcMismatch { expected_crc: 27648, actual_crc: 27686 }
+[LengthMismatch] LengthMismatch { expected_len: 13, actual_len: 17 }
 
 SIMULATION RESULTS:
 Total frames: 1000
-Successful frames: 904
-Failed frames: 96
+Successful frames: 920
+Failed frames: 80
 Breakdown: Packet too short: 0
 
-            Invalid sync: 27
+            Invalid sync: 17
 
-            Length mismatch: 23
+            Length mismatch: 21
 
-            CRC mismatch: 19
+            CRC mismatch: 25
 
-            Skipped: 26
+            Skipped: 17
 
-            Duplicate: 13
+            Duplicate: 10
 
-            Out of order: 10
+            Out of order: 8
 

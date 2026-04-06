@@ -16,11 +16,11 @@ export const GraphView: React.FC = () => {
   const formatTime = (ms: number) => `${Math.floor(ms / 1000)}s`;
 
   return (
-    <div className="flex space-x-4 w-full h-[300px] mt-4">
+    <div className="flex space-x-4 w-full h-full mt-4">
       {/* Temperature Graph */}
       <div className="flex-1 bg-dark-800 border border-dark-700 rounded p-4 flex flex-col relative">
         <div className="flex justify-between items-center mb-2">
-          <h3 className="text-gray-400 text-sm font-semibold tracking-wider">Temperature History (°C)</h3>
+          <h3 className="text-gray-400 text-sm font-semibold tracking-wider">Temperature (°C)</h3>
           {!isLockedToFront && (
             <button 
               onClick={() => setIsLockedToFront(true)}
@@ -42,11 +42,17 @@ export const GraphView: React.FC = () => {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" vertical={false} />
               <XAxis dataKey="timestamp" tickFormatter={formatTime} stroke="#9ca3af" fontSize={12} minTickGap={30} />
-              <YAxis domain={['auto', 'auto']} stroke="#9ca3af" fontSize={12} />
+              <YAxis
+                domain={[(min: number) => Math.floor(min / 10) * 10, (max: number) => Math.ceil(max / 10) * 10]}
+                stroke="#9ca3af"
+                fontSize={12}
+                allowDecimals={false}
+              />
               <Tooltip 
                 contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151' }}
                 itemStyle={{ color: '#eab308' }}
                 labelFormatter={(v) => `Time: ${formatTime(v as number)}`}
+                formatter={(value) => [`${Number(value).toFixed(2)} °C`, 'Temperature']}
               />
               <Area type="monotone" dataKey="temperature" stroke="#eab308" fillOpacity={1} fill="url(#colorTemp)" isAnimationActive={false} />
             </AreaChart>
@@ -56,7 +62,7 @@ export const GraphView: React.FC = () => {
 
       {/* Voltage Graph */}
       <div className="flex-1 bg-dark-800 border border-dark-700 rounded p-4 flex flex-col relative">
-        <h3 className="text-gray-400 text-sm mb-2 font-semibold tracking-wider">Voltage History (V)</h3>
+        <h3 className="text-gray-400 text-sm mb-2 font-semibold tracking-wider">Voltage (V)</h3>
         <div className="flex-1 w-full min-h-0" onWheel={handleWheel}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={visibleData} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
@@ -68,13 +74,46 @@ export const GraphView: React.FC = () => {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" vertical={false} />
               <XAxis dataKey="timestamp" tickFormatter={formatTime} stroke="#9ca3af" fontSize={12} minTickGap={30} />
-              <YAxis domain={[3.0, 3.5]} stroke="#9ca3af" fontSize={12} />
+              <YAxis domain={[3.0, 3.5]} stroke="#9ca3af" fontSize={12} tickCount={6} tickFormatter={(v: number) => v.toFixed(1)} />
               <Tooltip 
                 contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151' }}
                 itemStyle={{ color: '#3b82f6' }}
                 labelFormatter={(v) => `Time: ${formatTime(v as number)}`}
+                formatter={(value) => [`${Number(value).toFixed(3)} V`, 'Voltage']}
               />
               <Area type="monotone" dataKey="voltage" stroke="#3b82f6" fillOpacity={1} fill="url(#colorVolt)" isAnimationActive={false} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Light Sensor Graph */}
+      <div className="flex-1 bg-dark-800 border border-dark-700 rounded p-4 flex flex-col relative">
+        <h3 className="text-gray-400 text-sm mb-2 font-semibold tracking-wider">Light (ADC)</h3>
+        <div className="flex-1 w-full min-h-0" onWheel={handleWheel}>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={visibleData} margin={{ top: 5, right: 0, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorLight" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" vertical={false} />
+              <XAxis dataKey="timestamp" tickFormatter={formatTime} stroke="#9ca3af" fontSize={12} minTickGap={30} />
+              <YAxis
+                domain={[(min: number) => Math.floor(min / 100) * 100, (max: number) => Math.ceil(max / 100) * 100]}
+                stroke="#9ca3af"
+                fontSize={12}
+                allowDecimals={false}
+              />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#1f2937', borderColor: '#374151' }}
+                itemStyle={{ color: '#22c55e' }}
+                labelFormatter={(v) => `Time: ${formatTime(v as number)}`}
+                formatter={(value) => [`${Number(value)} ADC`, 'Light']}
+              />
+              <Area type="monotone" dataKey="light" stroke="#22c55e" fillOpacity={1} fill="url(#colorLight)" isAnimationActive={false} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
