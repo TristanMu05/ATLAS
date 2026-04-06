@@ -1,0 +1,2 @@
+[LinkState:CONNECTING] opening COM7
+[LinkState:CONNECTING] waiting for COM7: No such file or directory

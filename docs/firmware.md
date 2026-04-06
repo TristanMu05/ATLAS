@@ -25,18 +25,17 @@ The firmware is not responsible for:
 - Long-term log storage and replay tooling.
 - Host-side packet parsing beyond constructing and transmitting valid packets.
 
-## Current v1 Hardware Decisions
+## v1 Hardware Implementation
 
 - MCU target: `STM32F446RET6`
 - Architecture: superloop, no RTOS
 - Communications: UART at 115200 baud, 8N1, no flow control
 - Sensor set:
-  - external temperature sensor
-  - external light sensor
-  - ADC-based voltage monitor input
-- Voltage source policy:
-  - the `voltage` telemetry field represents millivolts
-  - until a dedicated external battery monitor is finalized, the firmware may use an onboard analog reading or a simulated scaled value as the source for this field
+  - **Temperature**: NTC thermistor on ADC channel PA1. Beta coefficient: 3950. Operating range: −40 °C to 125 °C. Reported in signed deci-degrees Celsius.
+  - **Light**: Photoresistor on ADC channel PA0. Reported as raw ADC counts.
+  - **Voltage**: STM32 internal VRefInt channel. Reported in millivolts (represents the 3.3 V supply rail).
+- Visual indicators: tri-color RGB LEDs driven by GPIO, thresholds set for temperature and light level bands.
+- SysTick configured at 1 kHz (1 ms resolution) for packet timestamps.
 
 ## Primary Design Decision
 
@@ -244,53 +243,28 @@ Sensor sampling policy for v1:
 - light sampled once per telemetry period
 - voltage sampled once per telemetry period
 
-## Suggested Firmware Module Breakdown
+## Implemented Firmware Modules
 
-The firmware should be separated into these modules:
+The firmware is split across these source files under `firmware/atlas_firmware/Src/`:
 
-- `main`: startup and top-level loop
-- `platform`: clocks, HAL setup, MCU-specific initialization
-- `uart`: byte transport and RX/TX buffering
-- `protocol`: packet encode, decode, CRC, framing
-- `sensors`: sensor drivers and sample aggregation
-- `state_machine`: mode ownership and transition rules
-- `commands`: command validation and dispatch
-- `faults`: fault detection, latching, and reporting
-- `telemetry`: telemetry field assembly and packet scheduling
+| File | Responsibility |
+|---|---|
+| `main.c` | Startup, clock/peripheral init, RGB LED control, superloop |
+| `packet.c` | Packet encode/decode, CRC-16/CCITT-FALSE, frame builder functions |
+| `uart.c` | UART byte transport, RX/TX buffering |
+| `adc.c` | ADC sampling for light, temperature (thermistor), and VRefInt (voltage) |
+| `normal.c` | NORMAL mode logic, telemetry scheduling, fault evaluation |
 
-This keeps transport, protocol logic, and behavior decisions separated.
+Header files under `firmware/atlas_firmware/Inc/` mirror each `.c` file. The protocol definitions in `packet.h` are kept in sync with the Rust `ground/protocol` crate.
 
-## Minimum Viable Firmware
+## Implementation Status
 
-The first firmware milestone should:
+The v1 firmware is complete and has been validated against the ground station in a live hardware session. All items below are implemented:
 
-- boot reliably on the STM32F446RET6
-- initialize UART, timers, watchdog, ADC, and the initial sensors
-- send valid telemetry packets on the defined interval
-- receive and validate the v1 command set
-- maintain `IDLE`, `NORMAL`, and `SAFE`
-- detect packet corruption and basic sensor failures
-- expose enough status for the ground system to confirm correct behavior
-
-Diagnostic extras, advanced authentication, and complex recovery workflows can come later.
-
-## Remaining Open Items
-
-These items are intentionally deferred until bring-up and characterization:
-
-- exact sensor part numbers and electrical interface details
-- final ADC scaling constants and calibration values
-- numeric SAFE thresholds for temperature and voltage
-- whether the voltage field stays simulated during early bring-up or is replaced by a dedicated hardware monitor immediately
-- additional fault / event codes beyond the initial set in [protocol.md](protocol.md)
-
-These are not protocol blockers. Firmware implementation can proceed now.
-
-## Recommended Next Implementation Steps
-
-1. Generate the STM32F446RET6 CubeMX / CubeIDE project.
-2. Bring up clocks, UART, timer tick, watchdog, ADC, and GPIO heartbeat.
-3. Implement protocol encode and decode to match [protocol.md](protocol.md) and the Rust packet crate.
-4. Build telemetry packet assembly with the frozen 10-byte payload.
-5. Add command parsing for the four v1 commands.
-6. Characterize sensor readings on hardware and then fill in numeric SAFE thresholds.
+- Boots on STM32F446RET6, initializes clocks, UART, SysTick, ADC, and GPIO
+- Sends telemetry packets at the correct rate for each mode
+- Receives and validates the full v1 command set (`SET_MODE`, `REQUEST_STATUS`, `CLEAR_FAULTS`, `SET_TELEMETRY_ENABLE`, `SMALL_FAULT`, `MAJOR_FAULT`)
+- Maintains `IDLE`, `NORMAL`, and `SAFE` mode transitions
+- Detects packet corruption and responds with NAK or event packets
+- Fault injection commands (`SMALL_FAULT`, `MAJOR_FAULT`) are functional for ground station testing
+- RGB LEDs indicate sensor state in real time

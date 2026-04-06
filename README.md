@@ -1,168 +1,214 @@
-# ATLAS - Avionic Telemetry Logging and Analysis System
+# ATLAS — Avionic Telemetry Logging and Analysis System
 
-A comprehensive avionics data acquisition and analysis system consisting of embedded firmware, ground station software, and comprehensive documentation.
+ATLAS is a senior capstone avionics data acquisition and analysis system. It streams real-time sensor telemetry from an STM32F446RET6 microcontroller over UART to a Rust backend server, which broadcasts data via WebSocket to a React dashboard. The system supports live hardware sessions, a built-in simulator, fault injection, and binary session logging.
 
-## Features
+---
 
-- **Real-time Telemetry**: Stream avionic sensor data from embedded systems
-- **Protocol Compliance**: Custom binary protocol with CRC validation
-- **State Machine Control**: Robust finite state machine for system operations
-- **Ground Station**: Feature-rich Rust-based dashboard and command interface
-- **Simulation Support**: Built-in simulator for testing and development
-- **Comprehensive Logging**: Full telemetry data recording and replay capabilities
-- **Command Interface**: Remote command dispatcher with protocol validation
+## Architecture
+
+| Layer | Technology | Role |
+|---|---|---|
+| Firmware | C (STM32F446RET6) | Sensor acquisition, state machine, UART TX/RX |
+| Protocol | Rust (`ground/protocol`) | Binary framing, CRC-16/CCITT-FALSE, encode/decode |
+| Backend | Rust + Axum (`ground/backend`) | Serial bridge, command dispatch, WebSocket broadcast |
+| UI | React + Vite + TypeScript | Real-time dashboard, graphs, command console |
+| Simulator | Rust (`ground/simulator`) | Synthetic telemetry with fault injection |
+| Logger | Rust (`ground/logger`) | Binary `.atl` session recording |
+| Replay | Rust (`ground/replay`) | Playback of logged sessions *(in progress — not wired to UI)* |
+
+---
 
 ## Project Structure
 
 ```
 ATLAS/
-├── README.md                 # This file
-├── LICENSE                   # Project license
-├── .gitignore               # Git ignore rules
-├── .editorconfig            # Editor configuration
+├── docs/
+│   ├── requirements.md       # System requirements
+│   ├── protocol.md           # Binary protocol specification
+│   ├── modes.md              # Operating mode definitions
+│   ├── use_scenarios.md      # Key usage scenarios
+│   └── firmware.md           # Firmware design document
 │
-├── docs/                    # Project documentation
-│   ├── proposal.md          # Project proposal
-│   ├── requirements.md      # System requirements
-│   ├── use_scenarios.md     # Usage scenarios
-│   ├── modes.md             # Operating modes
-│   ├── protocol.md          # Telemetry protocol specification
-│   ├── commands.md          # Command set documentation
-│   ├── architecture_overview.md
-│   ├── firmware_design.md
-│   ├── state_machine.md
-│   ├── test_plan.md
-│   ├── demo_script.md
-│   └── weekly_journal/      # Development journal
+├── firmware/
+│   └── atlas_firmware/       # STM32CubeIDE project
+│       ├── Inc/              # packet.h, uart.h, adc.h, normal.h
+│       └── Src/              # main.c, packet.c, uart.c, adc.c, normal.c
 │
-├── firmware/                # Embedded firmware (STM32)
-│   ├── README.md
-│   ├── stm32/              # STM32CubeMX project
-│   │   ├── Core/
-│   │   ├── Drivers/
-│   │   ├── Middlewares/
-│   │   ├── Startup/
-│   │   └── atlas.ioc
-│   ├── src/                # Firmware source code
-│   │   ├── main.c
-│   │   ├── telemetry.c/h
-│   │   ├── commands.c/h
-│   │   ├── protocol.c/h
-│   │   ├── state_machine.c/h
-│   │   └── faults.c/h
-│   └── include/
+├── ground/
+│   ├── backend/              # Axum HTTP + WebSocket bridge (main entry point)
+│   ├── protocol/             # Packet encode/decode and CRC — shared library
+│   ├── simulator/            # Synthetic telemetry generator with fault injection
+│   ├── logger/               # Binary .atl session logging
+│   └── replay/               # Session playback (work in progress)
 │
-├── ground/                 # Ground station (Rust)
-│   ├── backend/            # Backend server
-│   ├── logger/             # Data logger
-│   ├── protocol/           # Protocol parser
-│   ├── replay/             # Data replay
-│   └── simulator/          # Telemetry simulator
+├── ui/                       # React + Vite + Tailwind dashboard
+│   └── src/
+│       ├── components/       # TelemetryPanel, CommandConsole, FaultPanel, GraphView, ReplaySystem
+│       ├── contexts/         # TelemetryProvider — global WebSocket state and command dispatch
+│       └── lib/              # types.ts — shared TypeScript interfaces
 │
-├── tools/                  # Utility tools
-│   ├── crc_check/
-│   ├── packet_inspector/
-│   └── log_converter/
-│
-├── ui/                     # Ground station UI (React)
-│   ├── src/
-│   └── public/
-│
-└── tests/                  # Integration tests
+└── tests/                    # Placeholder (protocol tests live in ground/protocol/tests/)
 ```
+
+---
 
 ## Prerequisites
 
-### Firmware Development
-- ARM GCC toolchain
-- STM32CubeMX
+### Firmware
+- STM32CubeIDE (or ARM GCC + Make)
 - ST-Link V2 programmer
 
-### Ground Station & Simulator
-- Rust 1.70+ ([rustup](https://rustup.rs/))
-- Cargo
-- Serial port access
+### Backend and Tools
+- Rust 1.70+ — install via [rustup.rs](https://rustup.rs/)
 
-### Documentation
-- Markdown viewer or IDE with Markdown support
+### UI
+- Node.js 18+ and npm
+
+### Hardware Serial (Windows + WSL)
+When running live hardware on Windows, the backend runs inside WSL and the STM32 USB-serial device is forwarded using `usbipd-win`. See the [Live Hardware Setup](#live-hardware-setup-windows--wsl) section below.
+
+---
 
 ## Getting Started
 
-### Building the Firmware
+### 1. Start the Backend
 
+**Simulator mode (no hardware required):**
 ```bash
-cd firmware
-# Use STM32CubeMX to generate project, then build with ARM GCC
+cargo run --manifest-path ground/backend/Cargo.toml
+```
+Then click **SIMULATOR MODE** in the UI to start a simulated telemetry session.
+
+**Live hardware mode (see full setup below for WSL):**
+```bash
+export ATLAS_SERIAL_PORT=/dev/ttyACM0   # adjust to your port
+export ATLAS_SERIAL_BAUD=115200
+cargo run --manifest-path ground/backend/Cargo.toml
 ```
 
-### Running the Ground Station
+The backend listens on `http://0.0.0.0:3000` by default. The UI connects to it automatically.
+
+### 2. Start the UI
 
 ```bash
-cd ground
-cargo build --release
-cargo run --release
+cd ui
+npm install
+npm run dev
 ```
 
-### Running the Simulator
+Open `http://localhost:5173` in your browser. The dashboard connects to the backend WebSocket automatically on load.
 
+---
+
+## Environment Variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `ATLAS_BIND_ADDR` | `0.0.0.0:3000` | Backend HTTP/WebSocket bind address |
+| `ATLAS_SERIAL_PORT` | `COM7` | Serial port for live hardware session |
+| `ATLAS_SERIAL_BAUD` | `115200` | Serial baud rate |
+
+---
+
+## Live Hardware Setup (Windows + WSL)
+
+The backend must run inside WSL to access the STM32 serial device on Windows. Use `usbipd-win` to forward the USB device.
+
+**1. Attach the STM32 USB device to WSL** (run in Windows admin PowerShell):
+```powershell
+usbipd attach --wsl --busid <busid> --auto-attach
+```
+Find the correct `busid` with `usbipd list`.
+
+**2. Confirm the device in WSL:**
 ```bash
-cd simulator
-cargo run --release
+ls -l /dev/ttyACM0
 ```
+
+**3. Start the backend in WSL:**
+```bash
+cd /mnt/c/Users/<you>/revival_project/ATLAS/ground/backend
+export ATLAS_SERIAL_PORT=/dev/ttyACM0
+export ATLAS_SERIAL_BAUD=115200
+cargo run
+```
+
+**4. Start the UI in Windows PowerShell:**
+```powershell
+cd ui
+npm run dev
+```
+
+If the serial device disconnects, re-run the `usbipd attach` command and restart the backend. The UI will reconnect automatically once the backend re-establishes the serial link.
+
+---
+
+## Session Logs
+
+Each live session writes two files to `ground/backend/logs/`:
+
+| File | Contents |
+|---|---|
+| `live_<port>_<timestamp>_packets.atl` | Raw binary frames (length-prefixed) |
+| `live_<port>_<timestamp>_errors.txt` | Protocol error log with summary statistics |
+
+---
+
+## Running Tests
+
+Protocol unit tests (encoder, decoder, CRC):
+```bash
+cargo test --manifest-path ground/protocol/Cargo.toml
+```
+
+UI build validation (TypeScript compile check):
+```bash
+cd ui && npm run build
+```
+
+---
+
+## Operating Modes
+
+| Mode | Telemetry Rate | Description |
+|---|---|---|
+| IDLE | 500 ms | Powered, waiting for commands |
+| NORMAL | 100 ms | Primary operation, full telemetry |
+| SAFE | 200 ms | Reduced functionality, active critical fault |
+| DIAGNOSTIC | 100 ms | Self-test and maintenance |
+
+See [docs/modes.md](docs/modes.md) for transition rules.
+
+---
+
+## Fault Injection
+
+The command console supports injecting faults for testing:
+
+| Command | Param | Effect |
+|---|---|---|
+| `SMALL_FAULT` | `1` | Inject CRC error |
+| `SMALL_FAULT` | `2` | Inject bad sync byte |
+| `SMALL_FAULT` | `3` | Inject length mismatch |
+| `SMALL_FAULT` | `4` | Inject sequence gap |
+| `MAJOR_FAULT` | `1` | Temperature spike (forces SAFE) |
+| `MAJOR_FAULT` | `2` | Voltage spike (forces SAFE) |
+| `MAJOR_FAULT` | `3` | Light sensor failure (forces SAFE) |
+| `MAJOR_FAULT` | `4` | Temperature dip (forces SAFE) |
+| `MAJOR_FAULT` | `5` | Voltage drop (forces SAFE) |
+
+---
 
 ## Documentation
 
-See the [docs/](docs/) directory for detailed documentation:
-
-- [Project Proposal](docs/proposal.md)
 - [System Requirements](docs/requirements.md)
 - [Protocol Specification](docs/protocol.md)
-- [Architecture Overview](docs/architecture_overview.md)
-- [Test Plan](docs/test_plan.md)
+- [Operating Modes](docs/modes.md)
+- [Use Scenarios](docs/use_scenarios.md)
+- [Firmware Design](docs/firmware.md)
 
-## Development
-
-### Running Tests
-
-```bash
-# Firmware tests
-cd firmware && make test
-
-# Ground station tests
-cd ground && cargo test
-
-# Protocol tests
-cargo test --test protocol_tests
-```
-
-### Development Workflow
-
-1. See [docs/weekly_journal/](docs/weekly_journal/) for ongoing development notes
-2. Follow the architecture outlined in [docs/architecture_overview.md](docs/architecture_overview.md)
-3. Reference [docs/state_machine.md](docs/state_machine.md) for system behavior
-
-## Tools
-
-Utilities for protocol analysis and data conversion:
-
-- **CRC Check**: Validate protocol checksums
-- **Packet Inspector**: Analyze telemetry packets
-- **Log Converter**: Convert logged data formats
+---
 
 ## License
 
-See [LICENSE](LICENSE) file for details.
-
-## Support
-
-For issues, questions, or contributions, please refer to the project documentation or contact the development team.
-
-│   ├── fault_injection.rs
-│   └── replay_tests.rs
-│
-└── scripts/
-    ├── build_firmware.sh
-    ├── flash_stm32.sh
-    ├── run_ground.sh
-    └── format_all.sh
-
+See [LICENSE](LICENSE) for details.
